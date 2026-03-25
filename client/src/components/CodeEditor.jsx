@@ -90,11 +90,8 @@ export default function CodeEditor({ code, onChange, language, issues = [] }) {
         options: {
           isWholeLine: true,
           className: bg,
-          glyphMarginClassName: 'text-[10px] flex items-center justify-center font-bold text-white',
           glyphMarginHoverMessage: { value: glyphMessage },
           hoverMessage: { value: hoverMd },
-          minimap: { color: hex, position: 1 },
-          overviewRuler: { color: hex, position: 4 },
         },
       };
     });
