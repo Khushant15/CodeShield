@@ -1,3 +1,8 @@
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![React](https://img.shields.io/badge/Frontend-React-blue)
+![Node.js](https://img.shields.io/badge/Backend-Node.js-green)
+![Security](https://img.shields.io/badge/Focus-Security-red)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 # 🛡️ CodeShield — AI-Powered Security Vulnerability Analyzer
 
 A production-quality web application that analyzes JavaScript, Python, and Java source code for security vulnerabilities with precise line numbers, explanations, and fixes.
@@ -325,5 +330,5 @@ npm run build
 ---
 
 ## License
-
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 MIT — use freely, credit appreciated.
