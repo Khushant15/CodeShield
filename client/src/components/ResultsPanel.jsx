@@ -52,7 +52,7 @@ export default function ResultsPanel({ result, onLineClick }) {
         <div className="flex items-center gap-1 p-1 rounded-lg bg-shield-surface border border-shield-border">
           {['All', 'Critical', 'High', 'Medium', 'Low'].map((sev) => {
             const active = filter === sev;
-            const dotColors = { Critical: 'bg-red-600', High: 'bg-red-400', Medium: 'bg-yellow-400', Low: 'bg-green-400', All: 'bg-[#00d4ff]' };
+            const dotColors = { Critical: 'bg-red-700', High: 'bg-red-500', Medium: 'bg-orange-500', Low: 'bg-yellow-400', All: 'bg-[#00d4ff]' };
             return (
               <button
                 key={sev}
@@ -91,9 +91,9 @@ export default function ResultsPanel({ result, onLineClick }) {
       )}
 
       {filtered.length > 0 && (
-        <div className="px-1 mt-2 mb-2 flex items-center justify-between">
+        <div className="px-1 mt-2 mb-2 flex flex-col gap-0.5">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Detected Issues</h3>
-          <span className="text-[10px] font-mono text-[#475569]">Showing {filtered.length} of {issues.length}</span>
+          <span className="text-[10px] font-mono text-[#64748b]">Total {issues.length} issues in file</span>
         </div>
       )}
 

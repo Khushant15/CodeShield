@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, MapPin, Code2, Lightbulb, Cpu } from 'lucide-react';
 
 const SEV_MAP = {
-  Critical: { cls: 'badge-critical', dot: 'bg-red-600',   glow: 'glow-critical', border: 'border-red-600/30', ring: 'hover:border-red-600/50' },
-  High:   { cls: 'badge-high',   dot: 'bg-red-400',    glow: 'glow-high',   border: 'border-red-500/20',   ring: 'hover:border-red-500/40' },
-  Medium: { cls: 'badge-medium', dot: 'bg-yellow-400', glow: 'glow-medium', border: 'border-yellow-500/20', ring: 'hover:border-yellow-500/40' },
-  Low:    { cls: 'badge-low',    dot: 'bg-green-400',  glow: 'glow-low',    border: 'border-green-500/20',  ring: 'hover:border-green-500/40' },
+  Critical: { cls: 'badge-critical', dot: 'bg-red-700',   glow: 'glow-critical', border: 'border-red-600/40', ring: 'hover:border-red-600/60' },
+  High:   { cls: 'badge-high',   dot: 'bg-red-500',    glow: 'glow-high',   border: 'border-red-500/30',   ring: 'hover:border-red-500/50' },
+  Medium: { cls: 'badge-medium', dot: 'bg-orange-500', glow: 'glow-medium', border: 'border-orange-500/30', ring: 'hover:border-orange-500/50' },
+  Low:    { cls: 'badge-low',    dot: 'bg-yellow-400',  glow: 'glow-low',    border: 'border-yellow-500/30',  ring: 'hover:border-yellow-500/50' },
 };
 
 export default function IssueCard({ issue, index, onLineClick }) {

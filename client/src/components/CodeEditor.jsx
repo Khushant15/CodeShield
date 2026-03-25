@@ -53,29 +53,45 @@ export default function CodeEditor({ code, onChange, language, issues = [] }) {
     }
 
     const SEV_COLORS = {
-      Critical: { bg: 'bg-red-900/30 border-l-[3px] border-red-500',   hex: '#dc2626' },
-      High:     { bg: 'bg-red-900/10 border-l-2 border-red-400',       hex: '#f87171' },
-      Medium:   { bg: 'bg-yellow-900/10 border-l-2 border-yellow-400', hex: '#fbbf24' },
-      Low:      { bg: 'bg-green-900/10 border-l-2 border-green-400',   hex: '#4ade80' },
+      Critical: { bg: 'bg-red-900/60 border-l-[3px] border-red-700',   hex: '#b91c1c', w: 4 },
+      High:     { bg: 'bg-red-900/40 border-l-2 border-red-500',       hex: '#ef4444', w: 3 },
+      Medium:   { bg: 'bg-orange-900/30 border-l-2 border-orange-500', hex: '#f97316', w: 2 },
+      Low:      { bg: 'bg-yellow-900/20 border-l-2 border-yellow-400', hex: '#facc15', w: 1 },
     };
+    
+    // Support multiple vulnerabilities on a single line!
+    const issuesByLine = {};
+    issueList.filter(i => i.line > 0).forEach((issue) => {
+      if (!issuesByLine[issue.line]) issuesByLine[issue.line] = [];
+      issuesByLine[issue.line].push(issue);
+    });
 
-    const newDecorations = issueList.filter(i => i.line > 0).map((issue) => {
-      const { bg, hex } = SEV_COLORS[issue.severity] || SEV_COLORS.Low;
+    const newDecorations = Object.entries(issuesByLine).map(([lineStr, issuesOnLine]) => {
+      const lineNum = parseInt(lineStr, 10);
       
-      const hoverMd = [
+      // Get highest severity
+      issuesOnLine.sort((a, b) => (SEV_COLORS[b.severity]?.w || 0) - (SEV_COLORS[a.severity]?.w || 0));
+      const highestSevIssue = issuesOnLine[0];
+      const { bg, hex } = SEV_COLORS[highestSevIssue.severity] || SEV_COLORS.Low;
+      
+      const hoverMd = issuesOnLine.map(issue => [
         `**[${issue.severity}] ${issue.type}**`,
         `_${issue.explanation}_`,
         '',
         `***Fix***: \n\`\`\`${language}\n${issue.fix}\n\`\`\``
-      ].join('\n');
+      ].join('\n')).join('\n\n---\n\n');
+
+      const glyphMessage = issuesOnLine.length > 1 
+        ? `**${issuesOnLine.length} issues** (Highest: ${highestSevIssue.severity})`
+        : `**${highestSevIssue.severity}** issue`;
 
       return {
-        range: new monacoInstance.Range(issue.line, 1, issue.line, 1),
+        range: new monacoInstance.Range(lineNum, 1, lineNum, 1),
         options: {
           isWholeLine: true,
           className: bg,
-          glyphMarginClassName: 'text-[10px] flex items-center justify-center font-bold',
-          glyphMarginHoverMessage: { value: `**${issue.severity}** issue` },
+          glyphMarginClassName: 'text-[10px] flex items-center justify-center font-bold text-white',
+          glyphMarginHoverMessage: { value: glyphMessage },
           hoverMessage: { value: hoverMd },
           minimap: { color: hex, position: 1 },
           overviewRuler: { color: hex, position: 4 },
@@ -92,6 +108,20 @@ export default function CodeEditor({ code, onChange, language, issues = [] }) {
       applyDecorations(editorRef.current, monaco, issues);
     }
   }, [issues, monaco, language]);
+
+  // Jump to line handler
+  React.useEffect(() => {
+    const handleJump = (e) => {
+      const line = e.detail?.line;
+      if (line > 0 && editorRef.current) {
+        editorRef.current.revealLineInCenter(line);
+        editorRef.current.setPosition({ lineNumber: line, column: 1 });
+        editorRef.current.focus();
+      }
+    };
+    window.addEventListener('codeshield:jumpToLine', handleJump);
+    return () => window.removeEventListener('codeshield:jumpToLine', handleJump);
+  }, []);
 
   const monacoLang = language === 'javascript' ? 'javascript' : language === 'python' ? 'python' : 'java';
 
