@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg:      #080c14;
+  --surface: #0d1421;
+  --card:    #111827;
+  --border:  #1e2d45;
+  --accent:  #00d4ff;
+  --glow:    #0066ff;
+  --text:    #e2e8f0;
+  --muted:   #64748b;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2d4a6e; }
+
+/* Grid background */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Glow effects */
+.glow-accent { box-shadow: 0 0 20px rgba(0,212,255,0.15), 0 0 40px rgba(0,102,255,0.08); }
+.glow-critical { box-shadow: 0 0 16px rgba(220,38,38,0.25); }
+.glow-high   { box-shadow: 0 0 12px rgba(239,68,68,0.2); }
+.glow-medium { box-shadow: 0 0 12px rgba(234,179,8,0.2); }
+.glow-low    { box-shadow: 0 0 12px rgba(34,197,94,0.2); }
+
+/* Severity badges */
+.badge-critical { background: rgba(220,38,38,0.15); color: #ef4444; border: 1px solid rgba(220,38,38,0.3); }
+.badge-high   { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+.badge-medium { background: rgba(234,179,8,0.15); color: #fbbf24; border: 1px solid rgba(234,179,8,0.3); }
+.badge-low    { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+
+/* Score ring */
+@keyframes dashOffset {
+  from { stroke-dashoffset: 339; }
+}
+
+/* Scan animation */
+@keyframes scanLine {
+  0%   { top: 0; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+  animation: scanLine 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Card hover */
+.issue-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.issue-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Monaco fix */
+.monaco-editor, .monaco-editor-background {
+  background: #0d1421 !important;
+}
+
+/* Monaco Tooltip overrides */
+.monaco-editor .monaco-hover {
+  background-color: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+  padding: 8px !important;
+}
+.monaco-editor .monaco-hover-content {
+  color: #e2e8f0 !important;
+}
