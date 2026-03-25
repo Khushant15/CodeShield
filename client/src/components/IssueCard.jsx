@@ -47,18 +47,18 @@ export default function IssueCard({ issue, index, onLineClick }) {
               </span>
             )}
           </div>
-          <p className="text-sm font-semibold text-white leading-snug">{issue.type}</p>
-
-          {/* Line number pill */}
-          {issue.line > 0 && (
-            <button
-              className="mt-1.5 flex items-center gap-1 text-[11px] text-[#00d4ff] font-mono hover:underline"
-              onClick={(e) => { e.stopPropagation(); onLineClick?.(issue.line); }}
-            >
-              <MapPin size={10} />
-              Line {issue.line}
-            </button>
-          )}
+          <p className="text-sm font-semibold text-white leading-snug">
+            {issue.line > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onLineClick?.(issue.line); }}
+                className="text-[#00d4ff] hover:underline mr-1 font-mono tracking-tight"
+                title="Click to jump to line"
+              >
+                Line {issue.line}:
+              </button>
+            )}
+            {issue.type}
+          </p>
         </div>
 
         <span className="text-[#475569] flex-shrink-0">
