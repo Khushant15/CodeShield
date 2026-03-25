@@ -22,14 +22,14 @@ export default function Header({ isConnected }) {
   }, []);
 
   const aiLabel =
-    aiStatus === 'ok'       ? `AI (${aiProvider})` :
-    aiStatus === 'disabled' ? 'Static only' :
-    aiStatus === 'error'    ? 'AI key missing' : '';
+    aiStatus === 'ok' ? `AI (${aiProvider})` :
+      aiStatus === 'disabled' ? 'Static only' :
+        aiStatus === 'error' ? 'AI key missing' : '';
 
   const aiBadgeClass =
-    aiStatus === 'ok'       ? 'text-purple-400 bg-purple-900/20 border-purple-500/20' :
-    aiStatus === 'disabled' ? 'text-[#64748b] bg-shield-card border-shield-border' :
-    aiStatus === 'error'    ? 'text-yellow-400 bg-yellow-900/20 border-yellow-500/20' : '';
+    aiStatus === 'ok' ? 'text-purple-400 bg-purple-900/20 border-purple-500/20' :
+      aiStatus === 'disabled' ? 'text-[#64748b] bg-shield-card border-shield-border' :
+        aiStatus === 'error' ? 'text-yellow-400 bg-yellow-900/20 border-yellow-500/20' : '';
 
   return (
     <header className="relative z-10 border-b border-shield-border bg-shield-surface/90 backdrop-blur-md">
