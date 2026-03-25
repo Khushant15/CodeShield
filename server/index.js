@@ -23,21 +23,7 @@ const app = express();
 app.use(helmet());
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-app.use(
-  cors({
-    origin: (origin, cb) => {
-      // Allow requests with no origin (e.g. curl, Postman in dev)
-      if (!origin || config.security.allowedOrigins.includes(origin)) {
-        cb(null, true);
-      } else {
-        logger.warn('CORS blocked request', { origin });
-        cb(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'x-api-key'],
-  })
-);
+app.use(cors());
 
 // ── Body parsing (with payload size limit) ────────────────────────────────────
 app.use(express.json({ limit: config.maxPayloadSize }));
