@@ -22,33 +22,33 @@ function buildPrompt(code, language, staticIssues) {
     ? staticIssues.map((i) => `  Line ${i.line}: [${i.severity}] ${i.type}`).join('\n')
     : '  (none found by static analysis)';
 
-  return `You are a world-class application security engineer performing a thorough code security audit.
+  return `You are an elite, highly accurate application security engineer performing a code audit.
 
-TASK: Analyze the ${language} code below and identify ALL security vulnerabilities.
+TASK: Analyze the ${language} code below and identify SECURITY vulnerabilities ONLY.
 
 Static analysis already flagged:
 ${staticSummary}
 
-Your job:
-1. Find ALL vulnerabilities — including ones static analysis missed
-2. Be thorough: check for injection, XSS, auth issues, insecure config, secrets, unsafe functions, etc.
-3. For EACH vulnerability, identify the exact line number
+RULES FOR YOUR ANALYSIS:
+1. FOCUS ON ACCURACY: Ignore test files, harmless hardcoded strings, or non-security best practices. ONLY flag true security risks (Injection, XSS, Broken Auth, Secrets, SSRF, IDOR, etc.).
+2. You must do a thorough data-flow analysis to find logic and flow issues static analysis missed.
+3. IN SHORT EXPLANATIONS: The \`explanation\` field MUST be extremely short (1 sentence max) explaining the exact root cause simply.
+4. EXACT FIXES: The \`fix\` field MUST be a highly actionable snippet that the user can practically drop-in to replace the vulnerable code.
 
 Return a JSON array. Each item MUST have EXACTLY these fields:
 {
-  "type": "e.g. SQL Injection / XSS / Hardcoded Secret / Command Injection / IDOR / SSRF / etc.",
-  "severity": "High" or "Medium" or "Low",
+  "type": "e.g. SQL Injection / XSS / IDOR / etc.",
+  "severity": "Critical", "High", "Medium", or "Low",
+  "confidence": "High", "Medium", or "Low",
   "line": <integer line number, 0 if unknown>,
   "snippet": "<the actual vulnerable line or expression, max 120 chars>",
-  "explanation": "<1-2 sentences explaining why this is dangerous>",
-  "fix": "<concrete fix — include corrected code example when possible>"
+  "explanation": "<1 short, simple sentence explaining the root cause>",
+  "fix": "<drop-in code fix or exact step-by-step instruction>"
 }
 
-Rules:
-- Return ONLY the raw JSON array — no markdown, no explanation text outside the array
-- If you find no issues at all, return []
-- Do NOT repeat an issue if it's the same type AND same line as a static result
-- Be precise about line numbers — count from line 1
+- Return ONLY the raw JSON array — no markdown, no explanation text outside the array.
+- If you find no true vulnerabilities, return [].
+- Do NOT repeat an issue if it's the same type AND same line as a static result.
 
 CODE TO ANALYZE (${language}):
 \`\`\`${language}
@@ -162,7 +162,8 @@ function sanitizeIssue(raw) {
   return {
     id:          `AI_${String(_aiCounter++).padStart(3, '0')}`,
     type:        typeof raw.type        === 'string' ? raw.type.slice(0, 80)  : 'Security Issue',
-    severity:    ['High', 'Medium', 'Low'].includes(raw.severity) ? raw.severity : 'Medium',
+    severity:    ['Critical', 'High', 'Medium', 'Low'].includes(raw.severity) ? raw.severity : 'Medium',
+    confidence:  ['High', 'Medium', 'Low'].includes(raw.confidence) ? raw.confidence : 'Medium',
     line:        Number.isInteger(Number(raw.line)) ? Number(raw.line) : 0,
     snippet:     typeof raw.snippet     === 'string' ? raw.snippet.slice(0, 200) : '',
     explanation: typeof raw.explanation === 'string' ? raw.explanation : '',
