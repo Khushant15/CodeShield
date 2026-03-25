@@ -90,6 +90,13 @@ export default function ResultsPanel({ result, onLineClick }) {
         </div>
       )}
 
+      {filtered.length > 0 && (
+        <div className="px-1 mt-2 mb-2 flex items-center justify-between">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Detected Issues</h3>
+          <span className="text-[10px] font-mono text-[#475569]">Showing {filtered.length} of {issues.length}</span>
+        </div>
+      )}
+
       <div className="space-y-3 pb-4">
         {filtered.map((issue, idx) => (
           <IssueCard key={issue.id} issue={issue} index={idx} onLineClick={onLineClick} />
