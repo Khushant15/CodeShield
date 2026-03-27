@@ -18,6 +18,7 @@ async function handleAnalyze(req, res, next) {
       issueCount: result.issues.length,
       analysisTime: result.analysisTime,
       issues: result.issues,
+      summary: result.summary,
     });
   } catch (err) {
     logger.error('Controller error in handleAnalyze', { message: err.message });

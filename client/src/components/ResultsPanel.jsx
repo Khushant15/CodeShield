@@ -1,115 +1,83 @@
-import React, { useState, useMemo } from 'react';
-import { ShieldCheck, Filter, AlertTriangle } from 'lucide-react';
-import IssueCard from './IssueCard';
+import React from 'react';
+import { ShieldCheck, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import IssueList from './IssueList';
 import ScoreGauge from './ScoreGauge';
 import SeverityBreakdown from './SeverityBreakdown';
 
-const SEV_ORDER = { Critical: 0, High: 1, Medium: 2, Low: 3 };
-
 export default function ResultsPanel({ result, onLineClick }) {
-  const [filter, setFilter] = useState('All');
-
-  const filtered = useMemo(() => {
-    const issues = result?.issues || [];
-    return filter === 'All' ? issues : issues.filter((i) => i.severity === filter);
-  }, [result, filter]);
-
-  const counts = useMemo(() => {
-    const issues = result?.issues || [];
-    return {
-      All:      issues.length,
-      Critical: issues.filter((i) => i.severity === 'Critical').length,
-      High:     issues.filter((i) => i.severity === 'High').length,
-      Medium:   issues.filter((i) => i.severity === 'Medium').length,
-      Low:      issues.filter((i) => i.severity === 'Low').length,
-    };
-  }, [result]);
-
   if (!result) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center gap-4 py-20 text-[#334155]">
-        <div className="w-16 h-16 rounded-2xl border border-shield-border bg-shield-card flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center h-full text-center gap-4 py-20 text-slate-500">
+        <div className="w-16 h-16 rounded-2xl border border-shield-border bg-shield-card flex items-center justify-center shadow-xl animate-pulse">
           <ShieldCheck size={28} className="text-shield-border" />
         </div>
         <div>
-          <p className="font-semibold text-[#475569]">No Analysis Yet</p>
-          <p className="text-sm mt-1 text-[#334155]">Paste your code and click Analyze</p>
+          <p className="font-semibold text-slate-400">No Analysis Yet</p>
+          <p className="text-xs mt-1 text-slate-500">Paste your code and click Analyze to scan for vulnerabilities.</p>
         </div>
       </div>
     );
   }
 
-  const { score, issues, analysisTime } = result;
+  const { score, issues, summary, analysisTime } = result;
 
   return (
-    <div className="flex flex-col gap-4 h-full overflow-y-auto pr-1">
-      {/* Score + breakdown */}
-      <ScoreGauge score={score} issueCount={issues.length} analysisTime={analysisTime} />
-      {issues.length > 0 && <SeverityBreakdown issues={issues} />}
-
-      {/* Filter tabs */}
-      {issues.length > 0 && (
-        <div className="flex items-center gap-1 p-1 rounded-lg bg-shield-surface border border-shield-border">
-          {['All', 'Critical', 'High', 'Medium', 'Low'].map((sev) => {
-            const active = filter === sev;
-            const dotColors = { Critical: 'bg-red-700', High: 'bg-red-500', Medium: 'bg-orange-500', Low: 'bg-yellow-400', All: 'bg-[#00d4ff]' };
-            return (
-              <button
-                key={sev}
-                onClick={() => setFilter(sev)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer
-                  ${active ? 'bg-shield-card text-white shadow' : 'text-[#64748b] hover:text-[#94a3b8]'}`}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full ${dotColors[sev]}`} />
-                {sev}
-                <span className={`text-[10px] font-mono ${active ? 'text-[#64748b]' : 'text-[#334155]'}`}>
-                  {counts[sev]}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* No issues banner */}
-      {issues.length === 0 && (
-        <div className="flex flex-col items-center gap-3 p-6 rounded-xl border border-emerald-500/20 bg-emerald-950/20 text-center">
-          <ShieldCheck size={32} className="text-emerald-400" />
-          <div>
-            <p className="font-semibold text-emerald-400">No Vulnerabilities Detected</p>
-            <p className="text-xs text-[#64748b] mt-1">This code looks clean based on our analysis.</p>
-          </div>
-        </div>
-      )}
-
-      {/* Issue cards */}
-      {filtered.length === 0 && issues.length > 0 && (
-        <div className="flex items-center justify-center gap-2 py-6 text-sm text-[#475569]">
-          <Filter size={14} />
-          No {filter} issues found
-        </div>
-      )}
-
-      {filtered.length > 0 && (
-        <div className="px-1 mt-2 mb-2 flex flex-col gap-0.5">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Detected Issues</h3>
-          <span className="text-[10px] font-mono text-[#64748b]">Total {issues.length} issues in file</span>
-        </div>
-      )}
-
-      <div className="space-y-3 pb-4">
-        {filtered.map((issue, idx) => (
-          <IssueCard key={issue.id} issue={issue} index={idx} onLineClick={onLineClick} />
-        ))}
+    <div className="flex flex-col gap-6 h-full overflow-y-auto pr-2 custom-scrollbar pb-8">
+      {/* Score + Global Metrics */}
+      <div className="grid grid-cols-1 gap-4">
+        <ScoreGauge score={score} issueCount={issues.length} analysisTime={analysisTime} />
+        {issues.length > 0 && <SeverityBreakdown issues={issues} />}
       </div>
 
-      {/* Footer */}
-      {issues.length > 0 && (
-        <div className="flex items-center gap-1.5 text-[11px] text-[#334155] font-mono pb-2">
-          <AlertTriangle size={10} />
-          {issues.length} issue{issues.length !== 1 ? 's' : ''} found · static + AI analysis
+      {/* Main Content Area */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex flex-col">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500">Security Audit</h3>
+            <span className="text-[10px] font-mono text-slate-600">
+              Found {issues.length} potential {issues.length === 1 ? 'threat' : 'threats'}
+            </span>
+          </div>
+          {issues.length > 0 && (
+            <div className="px-2 py-0.5 rounded bg-shield-surface border border-shield-border text-[9px] font-mono text-slate-500">
+              {analysisTime}ms scan
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Empty State / Success */}
+        {issues.length === 0 ? (
+          <div className="flex flex-col items-center gap-4 p-10 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 text-center shadow-[0_0_40px_-15px_rgba(16,185,129,0.1)]">
+            <div className="p-4 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              <CheckCircle2 size={32} className="text-emerald-400" />
+            </div>
+            <div className="max-w-[240px]">
+              <p className="font-bold text-emerald-400">No Vulnerabilities Detected</p>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                Your code is secure. No known security patterns were identified in this scan.
+              </p>
+            </div>
+          </div>
+        ) : (
+          /* Detailed Issue List with Filtering/Sorting */
+          <IssueList
+            issues={issues}
+            onLineClick={onLineClick}
+            summary={summary}
+          />
+        )}
+      </div>
+
+      {/* Footer Info */}
+      <div className="mt-4 pt-4 border-t border-shield-border/30 flex items-center justify-between text-[10px] font-mono text-slate-600 px-1">
+        <div className="flex items-center gap-1.5">
+          <AlertTriangle size={10} className="text-orange-500/50" />
+          Powered by Static Analysis
+        </div>
+        <div className="opacity-50">
+          v2.0.0-final
+        </div>
+      </div>
     </div>
   );
 }

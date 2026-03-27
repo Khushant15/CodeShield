@@ -35,13 +35,22 @@ async function analyzeCode(code, language) {
       return (sev[a.severity] ?? 3) - (sev[b.severity] ?? 3) || a.line - b.line;
     });
 
-  // 4. Score
+  // 4. Summary
+  const summary = {
+    total: allIssues.length,
+    critical: allIssues.filter(i => i.severity === 'Critical').length,
+    high: allIssues.filter(i => i.severity === 'High').length,
+    medium: allIssues.filter(i => i.severity === 'Medium').length,
+    low: allIssues.filter(i => i.severity === 'Low').length,
+  };
+
+  // 5. Score
   const score = calculateScore(allIssues);
   const analysisTime = Date.now() - start;
 
   logger.info('Analysis complete', { totalIssues: allIssues.length, score, analysisTime });
 
-  return { score, issues: allIssues, analysisTime };
+  return { score, issues: allIssues, summary, analysisTime };
 }
 
 module.exports = { analyzeCode };
