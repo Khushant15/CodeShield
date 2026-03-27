@@ -12,7 +12,7 @@ export default function Header({ isConnected }) {
         setAiProvider(data.aiProvider || 'none');
         if (data.aiProvider === 'none') {
           setAiStatus('disabled');
-        } else if (data.aiConfigured) {
+        } else if (data.aiKeySet) {
           setAiStatus('ok');
         } else {
           setAiStatus('error');
